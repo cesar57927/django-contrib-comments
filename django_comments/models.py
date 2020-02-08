@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
+from django.db.models.fields.files import FieldFile
 from django.utils import timezone
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from .abstracts import (
@@ -10,7 +12,13 @@ from .abstracts import (
 
 class Comment(CommentAbstractModel):
     # Sofisis add this field for support images as comment
-    image = models.FileField(_('Image'), upload_to='comments/%Y/%m/', null=True, blank=True)
+    image: FieldFile = models.FileField(_('Image'), upload_to='comments/%Y/%m/', null=True, blank=True)
+
+    def render_comment(self) -> str:
+        """ Render comment in html, include image if exists """
+        if self.image:
+            return format_html(self.comment + ' <img src="{url}"/>', url=self.image.url)
+        return self.comment
 
     class Meta(CommentAbstractModel.Meta):
         db_table = "django_comments"
