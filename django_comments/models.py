@@ -12,7 +12,13 @@ from .abstracts import (
 
 class Comment(CommentAbstractModel):
     # Sofisis add this field for support images as comment
-    image: FieldFile = models.FileField(_('Image'), upload_to='comments/%Y/%m/', null=True, blank=True)
+    image: FieldFile = models.FileField(
+        _('Image'),
+        upload_to='comments/%Y/%m/',
+        null=True,
+        blank=True,
+        max_length=150,
+    )
 
     class Meta(CommentAbstractModel.Meta):
         db_table = "django_comments"
